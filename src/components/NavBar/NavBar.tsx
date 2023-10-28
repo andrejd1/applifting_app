@@ -25,10 +25,7 @@ export default function NavBar({ session }: NavbarProps) {
           Recent Articles
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
-        <Navbar.Collapse
-          id="main-navbar"
-          className="d-flex justify-content-between"
-        >
+        <Navbar.Collapse id="main-navbar" className="justify-content-between">
           <Nav>
             <Nav.Link as={Link} href="/about" active={pathName === "/about"}>
               About
