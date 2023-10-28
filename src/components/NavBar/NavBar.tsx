@@ -3,8 +3,7 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import { Button } from "@/components/bootstrap";
-import { signOut } from "next-auth/react";
+import Logout from "@/components/Logout/Logout";
 
 type NavbarProps = {
   session: Session | null;
@@ -41,7 +40,7 @@ export default function NavBar({ session }: NavbarProps) {
                 Login
               </Nav.Link>
             )}
-            {!!session && <Button onClick={() => signOut()}>Logout</Button>}
+            {!!session && <Logout />}
           </Nav>
         </Navbar.Collapse>
       </Container>

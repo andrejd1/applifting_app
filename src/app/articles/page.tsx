@@ -1,3 +1,3 @@
-export default function Articles() {
+export default function ArticlesPage() {
   return <div>Articles</div>;
 }
