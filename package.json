@@ -16,6 +16,7 @@
     "react": "^18",
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18",
+    "react-hook-form": "^7.47.0",
     "styled-components": "^6.1.0"
   },
   "devDependencies": {

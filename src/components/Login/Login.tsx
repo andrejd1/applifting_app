@@ -1,17 +1,27 @@
 "use client";
 import { Button, Form } from "@/components/bootstrap";
-import { FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+
+type TFormValues = {
+  email: string;
+  password: string;
+};
 
 export default function Login() {
   const router = useRouter();
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<TFormValues>();
+
+  const onSubmit = handleSubmit(async (data) => {
     const response = await signIn("credentials", {
-      username: formData.get("email"),
-      password: formData.get("password"),
+      username: data.email,
+      password: data.password,
       redirect: false,
     });
 
@@ -19,27 +29,45 @@ export default function Login() {
       router.push("/");
       router.refresh();
     } else {
-      console.log("Login failed");
+      setError("root", { message: "Wrong email or password" });
     }
-  };
+  });
 
   return (
     <Form
-      className="d-block mx-auto w-25 bg-white p-lg-4"
-      onSubmit={handleSubmit}
+      className="d-block mx-auto bg-white p-4 rounded-3"
+      style={{
+        maxWidth: "368px",
+        boxShadow: "0px 16px 48px 0px rgba(0, 0, 0, 0.175)",
+      }}
+      onSubmit={onSubmit}
     >
-      <Form.Group className=" mb-3" controlId="formEmail">
+      <h3 className="mb-3">Log In</h3>
+      <Form.Group className="mb-3" controlId="formEmail">
         <Form.Label>Email</Form.Label>
-        <Form.Control name="email" type="email" placeholder="Enter email" />
+        <Form.Control
+          type="email"
+          placeholder="Enter email"
+          {...register("email")}
+        />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formPassword">
+      <Form.Group className="mb-4" controlId="formPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control name="password" type="password" placeholder="Password" />
+        <Form.Control
+          type="password"
+          placeholder="Password"
+          {...register("password")}
+        />
       </Form.Group>
-      <Button className="align-self-end" variant="primary" type="submit">
-        Login
-      </Button>
+      {errors.root ? (
+        <p className="text-danger">{errors.root.message}</p>
+      ) : null}
+      <div className="d-flex justify-content-end">
+        <Button variant="primary" type="submit">
+          Log In
+        </Button>
+      </div>
     </Form>
   );
 }
