@@ -1,6 +1,12 @@
-"use client";
 import Login from "@/components/Login/Login";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect("/");
+  }
   return <Login />;
 }
