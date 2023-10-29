@@ -1,11 +1,15 @@
 "use client";
-import { Button, Form } from "@/components/bootstrap";
+import { Button, Form, Nav } from "@/components/bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import MDEditor from "@uiw/react-md-editor";
+import Image from "next/image";
+import React, { useRef, useState } from "react";
 
 type TFormValues = {
+  articleId: string;
   title: string;
-  image: string;
+  perex: string;
+  imageId: string;
   content: string;
 };
 
@@ -15,10 +19,30 @@ export default function ArticleForm() {
     handleSubmit,
     formState: { errors },
     control,
+    watch,
   } = useForm<TFormValues>();
+  const title = watch("title");
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+
+  const handleUploadImageButtonClick = () => {
+    imageInputRef.current?.click();
+  };
+
+  const handleDeleteImageButtonClick = () => {
+    setImage(null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImage(URL.createObjectURL(e.target.files![0]));
+  };
 
   const onSubmit = handleSubmit(async (data) => {
+    const imageId = image
+      ? image.split("/")[image.split("/").length - 1]
+      : null;
     console.log(data);
+    console.log(imageId);
   });
 
   return (
@@ -56,11 +80,56 @@ export default function ArticleForm() {
       </Form.Group>
       <Form.Group className="d-flex flex-column mb-4" controlId="formImage">
         <Form.Label>Featured image</Form.Label>
-        {/*<Form.Control type="text" {...register("image")} />*/}
-        <div className="d-inline-block">
-          <Button variant="secondary" size="sm">
-            Upload an Image
-          </Button>
+        <div className="d-flex flex-column">
+          <Form.Control
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            ref={imageInputRef}
+            onChange={handleImageChange}
+          />
+          {image && (
+            <>
+              <Image
+                src={image}
+                alt={title}
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "15%", height: "auto" }}
+              />
+              <Nav className="d-flex flex-row">
+                <Nav.Link
+                  className="p-0 pe-2 my-2"
+                  style={{
+                    color: "#0d6efd",
+                    borderRight: "1px solid rgba(200, 200, 200, 1)",
+                  }}
+                  onClick={handleUploadImageButtonClick}
+                >
+                  Upload New
+                </Nav.Link>
+                <Nav.Link
+                  className="p-2"
+                  style={{ color: "#dc3545" }}
+                  onClick={handleDeleteImageButtonClick}
+                >
+                  Delete
+                </Nav.Link>
+              </Nav>
+            </>
+          )}
+          {!image && (
+            <div className="d-inline-block">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleUploadImageButtonClick}
+              >
+                Upload an Image
+              </Button>
+            </div>
+          )}
         </div>
       </Form.Group>
       <Form.Group
