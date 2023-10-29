@@ -19,7 +19,7 @@ const handler = NextAuth({
           method: "POST",
           body: JSON.stringify(credentials),
           headers: {
-            "X-API-KEY": process.env.API_KEY || "",
+            "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
             "Content-Type": "application/json",
           },
         });
