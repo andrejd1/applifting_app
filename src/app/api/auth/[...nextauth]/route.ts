@@ -15,14 +15,17 @@ const handler = NextAuth({
         password: {},
       },
       async authorize(credentials) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-          method: "POST",
-          body: JSON.stringify(credentials),
-          headers: {
-            "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
-            "Content-Type": "application/json",
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API_URL}/login`,
+          {
+            method: "POST",
+            body: JSON.stringify(credentials),
+            headers: {
+              "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
         const user = await res.json();
 
         if (res.ok && user) {
@@ -32,7 +35,6 @@ const handler = NextAuth({
       },
     }),
   ],
-  secret: process.env.SECRET,
 });
 
 export { handler as GET, handler as POST };
