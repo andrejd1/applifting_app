@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 
 const handler = NextAuth({
   session: {
@@ -15,20 +16,20 @@ const handler = NextAuth({
         password: {},
       },
       async authorize(credentials) {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_API_URL}/login`,
-          {
-            method: "POST",
-            body: JSON.stringify(credentials),
-            headers: {
-              "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
-              "Content-Type": "application/json",
-            },
+        // const loginUrl = "https://fullstack.exercise.applifting.cz/login";
+        const loginUrl = `${process.env.BASE_API_URL}/login`;
+        const res = await axios({
+          method: "POST",
+          url: loginUrl,
+          data: credentials,
+          headers: {
+            "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
+            "Content-Type": "application/json",
           },
-        );
-        const user = await res.json();
+        });
+        const user = await res.data;
 
-        if (res.ok && user) {
+        if (res.status === 200 && user) {
           return user;
         }
         return null;
