@@ -1,10 +1,31 @@
 import { signOut } from "next-auth/react";
-import { Button } from "@/components/bootstrap";
+import { Button, Nav } from "@/components/bootstrap";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export default function Logout() {
+export default function LoggedIn() {
+  const pathName = usePathname();
   const handleLogout = async () => {
     await signOut({ redirect: true, callbackUrl: "/login" });
   };
 
-  return <Button onClick={handleLogout}>Logout</Button>;
+  return (
+    <Nav>
+      <Nav.Link
+        as={Link}
+        href="/my-articles"
+        active={pathName === "my-articles"}
+      >
+        My Articles
+      </Nav.Link>
+      <Nav.Link
+        as={Link}
+        href="/create-article"
+        active={pathName === "create-article"}
+      >
+        Create Article
+      </Nav.Link>
+      <Button onClick={handleLogout}>Logout</Button>
+    </Nav>
+  );
 }

@@ -3,7 +3,8 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
-import Logout from "@/components/Logout/Logout";
+import LoggedIn from "@/components/Logout/Logout";
+import Image from "next/image";
 
 type NavbarProps = {
   session: Session | null;
@@ -22,7 +23,8 @@ export default function NavBar({ session }: NavbarProps) {
     >
       <Container>
         <Navbar.Brand as={Link} href="/">
-          Recent Articles
+          <Image src={"logo.svg"} width={39} height={44} alt={"Cat Logo"} />
+          <span className="ps-lg-5 pe-lg-2 fs-6">Recent Articles</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar" className="justify-content-between">
@@ -31,14 +33,14 @@ export default function NavBar({ session }: NavbarProps) {
               About
             </Nav.Link>
           </Nav>
-          <Nav>
-            {!session && (
+          {!session && (
+            <Nav>
               <Nav.Link as={Link} href="/login" active={pathName === "/login"}>
                 Login
               </Nav.Link>
-            )}
-            {!!session && <Logout />}
-          </Nav>
+            </Nav>
+          )}
+          {!!session && <LoggedIn />}
         </Navbar.Collapse>
       </Container>
     </Navbar>

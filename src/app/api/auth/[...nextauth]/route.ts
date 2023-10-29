@@ -16,7 +16,6 @@ const handler = NextAuth({
         password: {},
       },
       async authorize(credentials) {
-        // const loginUrl = "https://fullstack.exercise.applifting.cz/login";
         const loginUrl = `${process.env.BASE_API_URL}/login`;
         const res = await axios({
           method: "POST",
