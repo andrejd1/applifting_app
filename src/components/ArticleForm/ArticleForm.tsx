@@ -1,6 +1,7 @@
 "use client";
 import { Button, Form } from "@/components/bootstrap";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import MDEditor from "@uiw/react-md-editor";
 
 type TFormValues = {
   title: string;
@@ -13,6 +14,7 @@ export default function ArticleForm() {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<TFormValues>();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -61,14 +63,27 @@ export default function ArticleForm() {
           </Button>
         </div>
       </Form.Group>
-      <Form.Group className="mb-4" controlId="formContent">
+      <Form.Group
+        className="mb-4"
+        controlId="formContent"
+        data-color-mode="light"
+      >
         <Form.Label>Content</Form.Label>
-        <Form.Control
-          as="textarea"
-          style={{ height: "40vh", resize: "none" }}
+        <Controller
+          control={control}
           {...register("content", {
             required: "The article content can't be empty!",
           })}
+          name={"content"}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <MDEditor value={value} onChange={onChange} />
+              <MDEditor.Markdown
+                source={value}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+            </>
+          )}
         />
         {errors.content ? (
           <span style={{ color: "red" }}>{errors.content.message}</span>
