@@ -14,14 +14,14 @@ export default function LoggedIn() {
       <Nav.Link
         as={Link}
         href="/my-articles"
-        active={pathName === "my-articles"}
+        active={pathName === "/my-articles"}
       >
         My Articles
       </Nav.Link>
       <Nav.Link
         as={Link}
         href="/create-article"
-        active={pathName === "create-article"}
+        active={pathName === "/create-article"}
       >
         Create Article
       </Nav.Link>

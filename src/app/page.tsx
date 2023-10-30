@@ -1,26 +1,15 @@
 import { Metadata } from "next";
-import axios from "axios";
 import { Article } from "@/types/article";
 import Image from "next/image";
 import { formatStringDate } from "@/utils/converters";
+import { useFetchAllArticles } from "@/hooks/useFetchAllArticles";
 
 export const metadata: Metadata = {
   title: "Recent Articles | Applifting Cat Blog",
 };
 
 export default async function Home() {
-  const articlesUrl = `${process.env.BASE_API_URL}/articles`;
-
-  const res = await axios({
-    method: "GET",
-    url: articlesUrl,
-    headers: {
-      "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
-      "Content-Type": "application/json",
-    },
-  });
-
-  const articles: Article[] = res.data.items;
+  const articles: Article[] = await useFetchAllArticles();
 
   return (
     <>
