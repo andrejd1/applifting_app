@@ -15,17 +15,20 @@
     "date-fns": "^2.30.0",
     "next": "14.0.0",
     "next-auth": "^4.24.4",
+    "next-swagger-doc": "^0.4.0",
     "prettier": "^3.0.3",
     "react": "^18",
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18",
     "react-hook-form": "^7.47.0",
-    "styled-components": "^6.1.0"
+    "styled-components": "^6.1.0",
+    "swagger-ui-react": "^5.9.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/swagger-ui-react": "^4.18.2",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "eslint": "^8",
