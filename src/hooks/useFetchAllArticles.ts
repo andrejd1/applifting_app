@@ -13,5 +13,9 @@ export async function useFetchAllArticles(): Promise<Article[]> {
     },
   });
 
-  return res.data.items;
+  const articles: Article[] = res.data.items;
+
+  return articles.sort(({ createdAt: a }, { createdAt: b }) =>
+    a > b ? -1 : a < b ? 1 : 0,
+  );
 }
