@@ -5,7 +5,7 @@ import Image from "next/image";
 import { formatStringDate } from "@/utils/converters";
 
 export const metadata: Metadata = {
-  title: "Articles | Applifting Cat Blog",
+  title: "Recent Articles | Applifting Cat Blog",
 };
 
 export default async function Home() {

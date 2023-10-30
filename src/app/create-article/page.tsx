@@ -1,12 +1,10 @@
-"use client";
+import Article from "@/components/Article/Article";
+import { Metadata } from "next";
 
-import ArticleForm from "@/components/ArticleForm/ArticleForm";
-import { SessionProvider } from "next-auth/react";
+export const metadata: Metadata = {
+  title: "Create new article - Applifting Cat Blog",
+};
 
 export default function CreateArticlePage() {
-  return (
-    <SessionProvider>
-      <ArticleForm />
-    </SessionProvider>
-  );
+  return <Article />;
 }

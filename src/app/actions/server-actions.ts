@@ -2,7 +2,7 @@
 
 import { Session } from "next-auth";
 import axios from "axios";
-import { TFormValues } from "@/components/ArticleForm/ArticleForm";
+import { TFormValues } from "@/components/Article/ArticleForm/ArticleForm";
 
 export async function createArticleAction(
   data: TFormValues,
