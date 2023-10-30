@@ -3,13 +3,16 @@ import { Button, Form, Nav } from "@/components/bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import MDEditor from "@uiw/react-md-editor";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useTransition } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { createArticleAction } from "@/app/actions/server-actions";
 
-type TFormValues = {
+export type TFormValues = {
   articleId: string;
   title: string;
   perex: string;
-  imageId: string;
+  imageId: string | null;
   content: string;
 };
 
@@ -20,11 +23,14 @@ export default function ArticleForm() {
     formState: { errors },
     control,
     watch,
+    setError,
   } = useForm<TFormValues>();
   const title = watch("title");
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [image, setImage] = useState<string | null>(null);
-
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const handleUploadImageButtonClick = () => {
     imageInputRef.current?.click();
   };
@@ -38,11 +44,15 @@ export default function ArticleForm() {
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    const imageId = image
-      ? image.split("/")[image.split("/").length - 1]
-      : null;
-    console.log(data);
-    console.log(imageId);
+    startTransition(async () => {
+      const status = await createArticleAction(data, session);
+      if (status === 200) {
+        router.push("/");
+        router.refresh();
+      } else {
+        setError("root", { message: "Something went wrong :(" });
+      }
+    });
   });
 
   return (
@@ -62,7 +72,7 @@ export default function ArticleForm() {
             className="mb-4 ms-sm-4 mb-sm-0"
             type="submit"
           >
-            Publish Article
+            {isPending ? "Publishing..." : "Publish Article"}
           </Button>
         </div>
       </div>
