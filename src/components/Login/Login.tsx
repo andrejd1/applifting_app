@@ -3,11 +3,7 @@ import { Button, Form } from "@/components/bootstrap";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-
-type TFormValues = {
-  email: string;
-  password: string;
-};
+import { TLoginFormValues } from "@/types/user";
 
 export default function Login() {
   const router = useRouter();
@@ -16,7 +12,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<TFormValues>();
+  } = useForm<TLoginFormValues>();
 
   const onSubmit = handleSubmit(async (data) => {
     const response = await signIn("credentials", {

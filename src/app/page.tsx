@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Article } from "@/types/article";
+import { TArticle } from "@/types/article";
 import Image from "next/image";
 import { formatStringDate } from "@/utils/converters";
 import { useFetchAllArticles } from "@/hooks/useFetchAllArticles";
@@ -9,14 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const articles: Article[] = await useFetchAllArticles();
+  const articles: TArticle[] = await useFetchAllArticles();
 
   return (
     <>
       <div className="my-5">
         <h1>Recent Articles</h1>
       </div>
-      {articles.map((article: Article) => (
+      {articles.map((article: TArticle) => (
         <div key={article.articleId} style={{ maxWidth: "860px" }}>
           {article.imageId && (
             <div>

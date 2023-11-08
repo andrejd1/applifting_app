@@ -1,7 +1,7 @@
-import { Article } from "@/types/article";
+import { TArticle } from "@/types/article";
 import axios from "axios";
 
-export async function useFetchAllArticles(): Promise<Article[]> {
+export async function useFetchAllArticles(): Promise<TArticle[]> {
   const articlesUrl = `${process.env.BASE_API_URL}/articles`;
 
   const res = await axios({
@@ -13,7 +13,7 @@ export async function useFetchAllArticles(): Promise<Article[]> {
     },
   });
 
-  const articles: Article[] = res.data.items;
+  const articles: TArticle[] = res.data.items;
 
   return articles.sort(({ createdAt: a }, { createdAt: b }) =>
     a > b ? -1 : a < b ? 1 : 0,

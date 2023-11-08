@@ -1,20 +1,16 @@
 "use client";
-import { Button, Form, Nav } from "@/components/bootstrap";
+import { Button, Form } from "@/components/bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import MDEditor from "@uiw/react-md-editor";
 import Image from "next/image";
-import React, { useRef, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { createArticleAction } from "@/app/actions/server-actions";
-
-export type TFormValues = {
-  articleId: string;
-  title: string;
-  perex: string;
-  imageId: string | null;
-  content: string;
-};
+import {
+  createArticleAction,
+  createArticleImage,
+} from "@/app/actions/server-actions";
+import { TArticleFormValues } from "@/types/article";
 
 export default function ArticleForm() {
   const {
@@ -24,27 +20,44 @@ export default function ArticleForm() {
     control,
     watch,
     setError,
-  } = useForm<TFormValues>();
+    setValue,
+  } = useForm<TArticleFormValues>();
   const title = watch("title");
-  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const imageId = watch("imageId");
   const [image, setImage] = useState<string | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const handleUploadImageButtonClick = () => {
-    imageInputRef.current?.click();
-  };
 
   const handleDeleteImageButtonClick = () => {
     setImage(null);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImage(URL.createObjectURL(e.target.files![0]));
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    startTransition(async () => {
+      if (event.target.files && event.target.files.length) {
+        console.log(event.target.files[0]);
+
+        const formData = new FormData();
+        formData.append(
+          "file",
+          event.target.files[0],
+          event.target.files[0].name,
+        );
+        const status = await createArticleImage(formData, session);
+        if (status === 200) {
+          setValue("imageId", event.target.files[0].name.split(".")[0]);
+          setImage(URL.createObjectURL(event.target.files[0]));
+        }
+      }
+    });
   };
 
   const onSubmit = handleSubmit(async (data) => {
     startTransition(async () => {
+      console.log(imageId);
       const status = await createArticleAction(data, session);
       if (status === 200) {
         router.push("/");
@@ -59,7 +72,7 @@ export default function ArticleForm() {
     <Form
       className="d-block bg-white p-4 rounded-3"
       style={{
-        maxWidth: "760px",
+        maxWidth: "48rem",
       }}
       onSubmit={onSubmit}
     >
@@ -91,13 +104,6 @@ export default function ArticleForm() {
       <Form.Group className="d-flex flex-column mb-4" controlId="formImage">
         <Form.Label>Featured image</Form.Label>
         <div className="d-flex flex-column">
-          <Form.Control
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            ref={imageInputRef}
-            onChange={handleImageChange}
-          />
           {image && (
             <>
               <Image
@@ -108,39 +114,75 @@ export default function ArticleForm() {
                 sizes="100vw"
                 style={{ width: "15%", height: "auto" }}
               />
-              <Nav className="d-flex flex-row">
-                <Nav.Link
+              <div className="d-flex flex-row">
+                <Form.Label
+                  htmlFor="imageFile"
                   className="p-0 pe-2 my-2"
                   style={{
                     color: "#0d6efd",
                     borderRight: "1px solid rgba(200, 200, 200, 1)",
+                    cursor: "pointer",
                   }}
-                  onClick={handleUploadImageButtonClick}
                 >
                   Upload New
-                </Nav.Link>
-                <Nav.Link
+                  <Form.Control
+                    type="file"
+                    id="imageFile"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageChange}
+                  />
+                </Form.Label>
+                <Form.Label
                   className="p-2"
-                  style={{ color: "#dc3545" }}
+                  style={{ color: "#dc3545", cursor: "pointer" }}
                   onClick={handleDeleteImageButtonClick}
                 >
                   Delete
-                </Nav.Link>
-              </Nav>
+                </Form.Label>
+              </div>
             </>
           )}
           {!image && (
             <div className="d-inline-block">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleUploadImageButtonClick}
-              >
+              <Form.Label className="btn btn-secondary" htmlFor="imageFile">
                 Upload an Image
-              </Button>
+                <Form.Control
+                  type="file"
+                  id="imageFile"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageChange}
+                />
+              </Form.Label>
             </div>
           )}
         </div>
+      </Form.Group>
+      <Form.Group
+        className="mb-4"
+        controlId="formContent"
+        data-color-mode="light"
+      >
+        <Form.Label>Perex</Form.Label>
+        <Controller
+          control={control}
+          {...register("perex", {
+            required: "The article perex can't be empty!",
+          })}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <MDEditor value={value} onChange={onChange} />
+              <MDEditor.Markdown
+                source={value}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+            </>
+          )}
+        />
+        {errors.perex ? (
+          <span style={{ color: "red" }}>{errors.perex.message}</span>
+        ) : null}
       </Form.Group>
       <Form.Group
         className="mb-4"
@@ -153,7 +195,6 @@ export default function ArticleForm() {
           {...register("content", {
             required: "The article content can't be empty!",
           })}
-          name={"content"}
           render={({ field: { onChange, value } }) => (
             <>
               <MDEditor value={value} onChange={onChange} />

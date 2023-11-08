@@ -2,15 +2,15 @@
 
 import { Session } from "next-auth";
 import axios from "axios";
-import { TFormValues } from "@/components/Article/ArticleForm/ArticleForm";
+import { TArticleFormValues } from "@/types/article";
 
 export async function createArticleAction(
-  data: TFormValues,
+  data: TArticleFormValues,
   session: Session | null,
 ) {
   const createArticleUrl = `${process.env.BASE_API_URL}/articles`;
 
-  const formData: TFormValues = {
+  const formData: TArticleFormValues = {
     title: data.title,
     content: data.content,
     articleId: data.articleId,
@@ -26,6 +26,26 @@ export async function createArticleAction(
       "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
       Authorization: `Bearer ${session?.user.access_token}`,
       "Content-Type": "application/json",
+    },
+  });
+
+  return res.status;
+}
+
+export async function createArticleImage(
+  data: FormData,
+  session: Session | null,
+) {
+  const createArticleImageUrl = `${process.env.BASE_API_URL}/images`;
+
+  const res = await axios({
+    method: "POST",
+    url: createArticleImageUrl,
+    data: data,
+    headers: {
+      "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY || "",
+      Authorization: `Bearer ${session?.user.access_token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
 
